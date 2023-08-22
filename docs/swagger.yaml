@@ -1,0 +1,31 @@
+basePath: /v1
+host: localhost:4000
+info:
+  contact:
+    email: ocean.hy.bao@gmail.com
+    name: Ocean Baoscrip
+    url: https://twitter.com/oceanbao
+  description: A movie service API in Go using Gin framework.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Dele Movie API
+  version: "1.0"
+paths:
+  /healthcheck:
+    get:
+      description: Respond 200 for OK
+      operationId: health-check
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: Check server health
+      tags:
+      - health
+swagger: "2.0"
+tags:
+- description: This is the description of the tag
+  name: This is the name of the tag

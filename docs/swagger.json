@@ -1,0 +1,46 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "A movie service API in Go using Gin framework.",
+        "title": "Dele Movie API",
+        "termsOfService": "http://swagger.io/terms/",
+        "contact": {
+            "name": "Ocean Baoscrip",
+            "url": "https://twitter.com/oceanbao",
+            "email": "ocean.hy.bao@gmail.com"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0"
+    },
+    "host": "localhost:4000",
+    "basePath": "/v1",
+    "paths": {
+        "/healthcheck": {
+            "get": {
+                "description": "Respond 200 for OK",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "health"
+                ],
+                "summary": "Check server health",
+                "operationId": "health-check",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        }
+    },
+    "tags": [
+        {
+            "description": "This is the description of the tag",
+            "name": "This is the name of the tag"
+        }
+    ]
+}

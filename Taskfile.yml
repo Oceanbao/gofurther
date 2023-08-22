@@ -1,0 +1,104 @@
+version: "3"
+
+dotenv: [".env"]
+
+tasks:
+  confirm:
+    cmds:
+      - echo -n 'Are you sure? [y/N] ' && read ans && [ ${ans:-N} = y ]
+
+  main:
+    desc: Run full build process.
+    cmds:
+      - task: audit
+      - task: build-api
+
+  audit:
+    desc: Run all audits.
+    deps: [vendor]
+    cmds:
+      - task: goimports
+      - task: govet
+      - task: staticcheck
+      - task: gotest
+
+  gomod:
+    desc: Check mod.
+    cmds:
+      - go mod tidy
+      - go mod verify
+
+  format:
+    desc: Go format.
+    cmds:
+      - go fmt ./...
+
+  goimports:
+    desc: goimports.
+    cmds:
+      - goimports -w .
+
+  govet:
+    desc: go vet all.
+    cmds:
+      - go vet ./...
+
+  staticcheck:
+    desc: staticcheck.
+    cmds:
+      - staticcheck ./...
+
+  build-api:
+    desc: Build cmd/api.
+    cmds:
+      - task: update-swagger
+      - go build -ldflags="{{.LINKER_FLAG}}" -o=./bin/api ./cmd/api
+      - GOOS=linux GOARCH=amd64 go build -ldflags="{{.LINKER_FLAG}}" -o=./bin/linux_amd64/api ./cmd/api
+    vars:
+      BUILD_TIME:
+        sh: date -u +"%Y-%m-%dT%H:%M:%SZ"
+      GIT_DESC:
+        sh: git describe --always --dirty --tags --long
+      LINKER_FLAG: -s -w -X main.buildTime={{.BUILD_TIME}} -X main.version={{.GIT_DESC}}
+
+  vendor:
+    desc: Run vendor with mod tidy and verify.
+    cmds:
+      - task: gomod
+      - go mod vendor
+
+  gotest:
+    desc: Run go test.
+    cmds:
+      - go test -race -vet=off ./...
+
+  run-api:
+    desc: Run the main app.
+    cmds:
+      - task: update-swagger
+      - go run ./cmd/api -db-dsn=${DATABASE_DSN}
+
+  db-psql:
+    desc: Enter PostgresSQL database.
+    cmds:
+      - psql $DATABASE_DSN
+
+  db-migration-new:
+    desc: Create a new migration with name.
+    cmds:
+      - task: confirm
+      - echo "Creating migration for {{.MIGRATION_NAME}}..."
+      - migrate create -seq -ext=.sql -dir=./migrations {{.MIGRATION_NAME}}
+
+  db-migration-up:
+    desc: Run migration up.
+    cmds:
+      - task: confirm
+      - echo "Running up migrations..."
+      - migrate -path ./migrations -database $DATABASE_DSN up
+
+  update-swagger:
+    desc: Update Swagger documentation.
+    cmds:
+      - swag fmt --dir ./cmd/api
+      - swag init --dir ./cmd/api
