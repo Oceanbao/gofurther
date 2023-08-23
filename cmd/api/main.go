@@ -1,16 +1,16 @@
-//	@title				Dele Movie API
-//	@version			1.0
-//	@description		A movie service API in Go using Gin framework.
-//	@tag.name			This is the name of the tag
-//	@tag.description	This is the description of the tag
-//	@termsOfService		http://swagger.io/terms/
-//	@contact.name		Ocean Baoscrip
-//	@contact.url		https://twitter.com/oceanbao
-//	@contact.email		ocean.hy.bao@gmail.com
-//	@license.name		Apache 2.0
-//	@license.url		http://www.apache.org/licenses/LICENSE-2.0.html
-//	@host				localhost:4000
-//	@BasePath			/v1
+// @title				Dele Movie API
+// @version			1.0
+// @description		A movie service API in Go using Gin framework.
+// @tag.name			This is the name of the tag
+// @tag.description	This is the description of the tag
+// @termsOfService		http://swagger.io/terms/
+// @contact.name		Ocean Baoscrip
+// @contact.url		https://twitter.com/oceanbao
+// @contact.email		ocean.hy.bao@gmail.com
+// @license.name		Apache 2.0
+// @license.url		http://www.apache.org/licenses/LICENSE-2.0.html
+// @host				localhost:4000
+// @BasePath			/v1
 package main
 
 import (
@@ -19,7 +19,8 @@ import (
 	"expvar"
 	"flag"
 	"fmt"
-	"log"
+
+	// "log"
 	"os"
 	"runtime"
 	"strings"
@@ -75,10 +76,10 @@ type application struct {
 }
 
 func main() {
-	err := godotenv.Load(".env")
-	if err != nil {
-		log.Fatalf("Cannot load .env file: %s", err)
-	}
+	_ = godotenv.Load(".env")
+	// if err != nil {
+	// log.Fatalf("Cannot load .env file: %s", err)
+	// }
 
 	var cfg config
 
@@ -116,7 +117,6 @@ func main() {
 		os.Exit(0)
 	}
 
-	// logger := log.New(os.Stdout, "", log.Ldate|log.Ltime)
 	logger := jsonlog.New(os.Stdout, jsonlog.LevelInfo)
 
 	db, err := openDB(cfg)

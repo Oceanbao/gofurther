@@ -1,0 +1,48 @@
+name: build
+
+permissions: {} # no need any permissions
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_call:
+    inputs:
+      skipTests:
+        description: "Skip tests, useful when there is a dedicated CI job for tests"
+        default: false
+        required: false
+        type: boolean
+
+jobs:
+  run:
+    name: Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    strategy:
+      fail-fast: true
+      matrix:
+        go: ["stable", "oldstable"]
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Install Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: ${{ matrix.go }}
+          check-latest: true
+
+      - name: Install Task
+        run: go install github.com/go-task/task/v3/cmd/task@latest
+
+      - name: Install Swagger
+        run: go install github.com/swaggo/swag/cmd/swag@latest
+
+      - name: Audit
+        run: task audit
+
+      - name: Build
+        run: task build-api
