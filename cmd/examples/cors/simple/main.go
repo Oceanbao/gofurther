@@ -40,7 +40,10 @@ func main() {
 	log.Printf("starting server on %s", *addr)
 
 	err := http.ListenAndServe(*addr, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte(html))
+		_, err := w.Write([]byte(html))
+		if err != nil {
+			log.Fatal(err)
+		}
 	}))
 	log.Fatal(err)
 }
